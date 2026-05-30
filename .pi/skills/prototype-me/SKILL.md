@@ -94,6 +94,17 @@ Prefer:
 - one opinionated option
 - one pragmatic hybrid when useful
 
+### Optional: Subagent Delegation
+When prototyping involves exploring complex code paths, generating significant boilerplate for spikes, or running time-consuming setup tasks, **delegate to subagents**.
+
+**Subagent Delegation Rules:**
+- **Agent Type**: Use `subagent_type: explore` or `subagent_type: general-purpose` based on needs.
+- **Parallelization**: You may launch multiple subagents concurrently to explore different architectural spikes or UI variations simultaneously.
+- **Context Isolation**: Construct a specific, focused prompt for the subagent describing exactly what variation to explore. Do not use `inherit_context: true`.
+- **Tooling Constraints**: Subagents may read, bash, and optionally write/edit ONLY within `docs/prototype/` or designated throwaway branches/folders.
+- **No Core Artifact Modification**: Subagents must not modify `docs/prd.md`, `docs/issues.md`, or core `docs/prototype/comparison.md`.
+- **Orchestration**: Use `get_subagent_result` to collect the outcomes of the spikes, evaluate them against success criteria, and write the final conclusions into `docs/prototype/comparison.md` yourself.
+
 ### 5. Use throwaway implementation boundaries
 
 When the repo supports runnable code and prototyping in code is the best approach:

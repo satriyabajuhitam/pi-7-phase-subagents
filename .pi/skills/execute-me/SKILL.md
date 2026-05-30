@@ -117,6 +117,19 @@ Execution rules:
 - do not write all tests up front before implementation; avoid horizontal slicing
 - if TDD is not a good fit for an otherwise testable behavior change, say so explicitly, explain why, and use the smallest trustworthy validation instead
 
+### Optional: Subagent Delegation
+When execution involves significant context switching, boilerplate code writing, or repetitive tasks that do not require high-level orchestrator judgment, **delegate the actual coding to a subagent**.
+
+**Subagent Delegation Rules:**
+- **Agent Type**: Use `subagent_type: execute`.
+- **Isolated Prompt Assembly**: The Primary Agent MUST construct a sterile, highly-focused prompt for the subagent. The prompt must include:
+  1. The exact ticket goal and scope.
+  2. The acceptance criteria.
+  3. The specific files to touch (with path details).
+  4. Explicit instruction to follow the red-green-refactor loop (TDD) if applicable.
+- **No Context Inheritance**: You MUST set `inherit_context: false` when calling the subagent to prevent hallucination or scope creep.
+- **Orchestrator Role**: The Primary Agent is responsible for parsing the `get_subagent_result` output, verifying that the subagent actually performed the validations (e.g., test passes), and manually updating `docs/issues.md` to `done` or `blocked` based on the outcome.
+
 ### 7. Validate before marking done
 
 Before any `done`, `fixed`, `pass`, or `ready` claim, gather fresh verification evidence from the current run.

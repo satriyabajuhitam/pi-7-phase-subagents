@@ -81,6 +81,17 @@ Prefer sources in this order:
 3. vendor examples or migration guides
 4. high-signal third-party references only when needed
 
+### Optional: Subagent Delegation
+When the research scope is large, requires scanning multiple sources concurrently, or involves significant reading that would bloat the primary context, **delegate to subagents**.
+
+**Subagent Delegation Rules:**
+- **Agent Type**: Use `subagent_type: explore`.
+- **Parallelization**: You may launch multiple subagents concurrently for different topics/domains.
+- **Context Isolation**: Construct a specific, focused prompt for the subagent. Do not use `inherit_context: true`.
+- **Tooling Constraints**: The `explore` subagent will use read, bash, grep, find, and optionally web search/scrape tools if authorized.
+- **No Direct Artifact Modification**: Subagents must return text summaries. They cannot write to `docs/research.md`.
+- **Orchestration**: Use `get_subagent_result` to collect findings, then compile the distilled answers into `docs/research.md` yourself.
+
 If web retrieval is needed in this repo:
 - use the `pi-firecrawler` extension/tooling directly
 - optionally store raw retrieval output under `.firecrawl/` when it materially helps traceability

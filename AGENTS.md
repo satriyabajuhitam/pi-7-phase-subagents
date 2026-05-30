@@ -209,6 +209,13 @@ When the main question is what should happen next with the current execution or 
 - When writing idea or research artifacts, record distilled outcomes rather than full transcripts.
 - Be explicit about uncertainty, stale-information risk, and anything that still needs validation.
 
+## Subagent Delegation (Orchestrator vs Worker)
+- **Primary Agent is the Orchestrator**: The primary agent must act as the orchestrator and state manager.
+- **Subagents are Workers**: Subagents (such as `explore` or `execute`) must be treated strictly as isolated background workers.
+- **No Direct Artifact Modification by Subagents**: Subagents are strictly forbidden from modifying workflow state artifacts inside `docs/` directly (e.g., `docs/issues.md`, `docs/prd.md`). They must return textual reports/code back to the Primary Agent.
+- **Context Isolation**: When delegating work to a subagent, the Primary Agent must assemble a focused, sterile prompt tailored to the subagent's task and must use `inherit_context: false` to prevent scope creep or hallucination.
+- **Invariant Enforcement**: The "one AFK ticket per run" invariant in Phase 6 remains absolute. Subagents must not be used to bypass this rule or execute multiple tickets simultaneously. The Primary Agent must verify the subagent's work before marking a ticket as `done`.
+
 ## Current repository artifact paths
 - `docs/absorb.md`
 - `docs/idea.md`
