@@ -216,6 +216,20 @@ When the main question is what should happen next with the current execution or 
 - **Context Isolation**: When delegating work to a subagent, the Primary Agent must assemble a focused, sterile prompt tailored to the subagent's task and must use `inherit_context: false` to prevent scope creep or hallucination.
 - **Invariant Enforcement**: The "one AFK ticket per run" invariant in Phase 6 remains absolute. Subagents must not be used to bypass this rule or execute multiple tickets simultaneously. The Primary Agent must verify the subagent's work before marking a ticket as `done`.
 
+## Subagent Coordination Protocols
+To optimize efficiency and avoid agent failures during execution, the Orchestrator must enforce these 4 protocols when delegating to subagents:
+1. **Read First Mandate**: The Orchestrator must embed instructions in the subagent's prompt to explicitly read architecture and requirement documents (e.g., `docs/prd.md`, `docs/research.md`) before writing any code. Do not assume the subagent knows the system's current state.
+2. **Strict Interface Contracts**: When delegating work that requires specific API signatures or tool definitions, the Orchestrator must paste the exact TypeScript/code interface in the prompt rather than describing it vaguely.
+3. **Atomic Bypass Rule (Direct Edit)**: The Orchestrator is allowed to bypass subagent delegation and directly execute tasks (using the `edit` or `write` tools) if the task is:
+   - Cosmetic or typography/comment fixes.
+   - Minor one-line bug fixes post-testing.
+   - Simple configuration syncs (like updating static paths).
+   - Basic module registrations with known parameters.
+4. **Dynamic Turn Limits**: The Orchestrator should set `max_turns` dynamically based on the complexity of the delegated task:
+   - Simple analysis/exploration: `max_turns: 10`
+   - Modular coding without new dependencies: `max_turns: 15`
+   - Complex integration or system/unit testing tasks: `max_turns: 25`
+
 ## Current repository artifact paths
 - `docs/absorb.md`
 - `docs/idea.md`
